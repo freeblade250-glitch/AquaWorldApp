@@ -1,0 +1,34 @@
+name: Build AquaWorld APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Скачать проект
+        uses: actions/checkout@v4
+
+      - name: Установить Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Создать Android проект
+        run: flutter create --platforms=android --org com.aquaworld .
+
+      - name: Установить зависимости
+        run: flutter pub get
+
+      - name: Собрать APK
+        run: flutter build apk --release
+
+      - name: Загрузить APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AquaWorld-APK
+          path: build/app/outputs/flutter-apk/app-release.apk
